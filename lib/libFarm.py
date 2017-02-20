@@ -13,6 +13,7 @@ class WEEDS:
         else:
             cv2.imshow(title, image)
 
+    def waitClose(self):
         cv2.waitKey(0)
         cv2.destroyAllWindows()
 
@@ -33,14 +34,19 @@ class WEEDS:
     def getImage(self):
         return self.image
 
-    def extractWeeds(self, threshold=80):
+    def extractWeeds(self, threshold=80, channel="B"):
         zeros = np.zeros(self.image.shape[:2], dtype = "uint8")
 
         imgLAB = cv2.cvtColor(self.image, self.colorSpace)
         (L, A, B) = cv2.split(imgLAB)
-        self.displayImage("LAB", image=B)
-        (T_weeds, thresh_weeds) = cv2.threshold(B, threshold, 255, cv2.THRESH_BINARY)
-        self.displayImage("Threshold", image=thresh_weeds)
+        if(channel=="B"):
+            selectedChannel = B
+        elif(channel=="L"):
+            selectedChannel = L
+        elif(channel=="A"):
+            selectedChannel = A
+
+        (T_weeds, thresh_weeds) = cv2.threshold(selectedChannel, threshold, 255, cv2.THRESH_BINARY)
         imgRGB = cv2.merge([zeros, thresh_weeds, zeros])
         self.image = imgRGB
         #imgGray = cv2.cvtColor(imgRGB, cv2.COLOR_BGR2GRAY)
