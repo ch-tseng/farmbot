@@ -34,6 +34,19 @@ class WEEDS:
     def getImage(self):
         return self.image
 
+    def extractWeeds_all(self, b_threshold=80, a_threshold=80):
+        zeros = np.zeros(self.image.shape[:2], dtype = "uint8")
+
+        imgLAB = cv2.cvtColor(self.image, self.colorSpace)
+        (L, A, B) = cv2.split(imgLAB)
+
+        (T_weeds_b, thresh_weeds_b) = cv2.threshold(B, b_threshold, 255, cv2.THRESH_BINARY)
+        (T_weeds_a, thresh_weeds_a) = cv2.threshold(A, a_threshold, 255, cv2.THRESH_BINARY)
+        imgRGB = cv2.merge([zeros, thresh_weeds_b, thresh_weeds_a])
+        self.image = imgRGB
+        #imgGray = cv2.cvtColor(imgRGB, cv2.COLOR_BGR2GRAY)
+
+
     def extractWeeds(self, threshold=80, channel="B"):
         zeros = np.zeros(self.image.shape[:2], dtype = "uint8")
 

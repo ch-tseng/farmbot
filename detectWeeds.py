@@ -15,6 +15,6 @@ weeds.displayImage(title="Original")
 #weeds.applyMask(r=50)
 #weeds.displayImage(title="Masked")
 
-weeds.extractWeeds(150, channel="B")
+weeds.extractWeeds_all(160, 140)
 weeds.displayImage(title="Weeds area")
 weeds.waitClose()
