@@ -1,7 +1,7 @@
 # farmbot
 ---
-## countPlantsArea.py (Count plants area)
-## execute: python countPlantsArea.py -g 140 -r 150 -i images/weeds/IMAG2562.jpg
+### countPlantsArea.py (Count plants area)
+execute: python countPlantsArea.py -g 140 -r 150 -i images/weeds/IMAG2562.jpg
 
    if you set "debugPrint = False"       
        ---> will return: 0.151119444444
