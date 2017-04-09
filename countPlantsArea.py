@@ -4,7 +4,7 @@ import cv2
 from lib.libFarm import PLANTSAREA
 
 # You can adjust the values here ---------------
-debugPrint = False
+debugPrint = True
 reSize=(800,450)
 #-----------------------------------------------
 
@@ -27,5 +27,5 @@ else:
     textRatio = str(int(ratioPlants * 100)) + "%"
     cv2.putText(imgPlants, textRatio, (imgPlants.shape[1]-150, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 1, 126), 5)
     cv2.imshow("Plants area", imgPlants)
-
+    cv2.imwrite("output.png", imgPlants)
     cv2.waitKey(0)
