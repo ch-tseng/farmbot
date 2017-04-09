@@ -1,7 +1,9 @@
 Farmbot<br />
 ---
 ### countPlantsArea.py (Count plants area) <br />
-command execute: <font color="red">python countPlantsArea.py -g 140 -r 150 -i images/weeds/IMAG2562.jpg</font> <br />
+command execute: <br />
+*python countPlantsArea.py -g 140 -r 150 -i images/weeds/IMAG2562.jpg* 
+<br /><br />
 -g: *threshold for green plants: 0-255, smaller will detect more green plants (more sensitive) *<br />
 -h: *threshold for red plants: 0-255, smaller will detect more red plants (more sensitive) *<br />
 
