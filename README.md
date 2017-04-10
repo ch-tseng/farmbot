@@ -9,6 +9,6 @@ example: <br />
 
 if you set *"createImage = False"*  ---> will only get the value: 0.151119444444<br />
 
-if you set *"createImage = True"*  ---> will get the value & plants-area image at local <br />
+if you set *"createImage = True"*  ---> will get an image  with plants-area & value at local <br />
 ![alt tag](https://github.com/ch-tseng/farmbot/blob/master/output.png)
 
