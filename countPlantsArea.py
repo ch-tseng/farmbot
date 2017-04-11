@@ -4,7 +4,7 @@ import cv2
 from lib.libFarm import PLANTSAREA
 
 # You can adjust the values here ---------------
-debugPrint = True
+createImage = True
 reSize=(800,450)
 #-----------------------------------------------
 
@@ -19,18 +19,19 @@ plantsArea = PLANTSAREA(args["image"], reSize)
 
 imgPlants = plantsArea.extractPlantsArea(b_threshold=int(args["green"]), a_threshold=int(args["red"]))
 (greenArea, redArea, overlapArea) = plantsArea.countPlantsArea(imgPlants)
-print greenArea, redArea, overlapArea
 
-if (debugPrint==False):
+if (createImage==False):
     print (greenArea, redArea, overlapArea)
 
 else:
+
     textRatio = str(int((greenArea+redArea-overlapArea) * 100)) + "%"
 
     font = cv2.FONT_HERSHEY_COMPLEX_SMALL
     cv2.putText(imgPlants, "green plants:" + str(int((greenArea+overlapArea)*100))+"%", (imgPlants.shape[1]-220, 20), font, 1, (255, 1, 126), 1)
     cv2.putText(imgPlants, "red plants:" + str(int(redArea*100))+"%", (imgPlants.shape[1]-220, 45), font, 1, (255, 1, 126), 1)
     cv2.putText(imgPlants, "total plants:" + textRatio, (imgPlants.shape[1]-220, 70), font, 1, (255, 1, 126), 1)
-    cv2.imshow("Plants area", imgPlants)
     cv2.imwrite("output.png", imgPlants)
-    cv2.waitKey(0)
+    print (greenArea, redArea, overlapArea)
+    #cv2.imshow("Plants area", imgPlants)
+    #cv2.waitKey(0)
