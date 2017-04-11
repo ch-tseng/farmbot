@@ -21,14 +21,19 @@ class PLANTSAREA:
     def countPlantsArea(self, image):
         width = image.shape[1]
         height = image.shape[0]
-        greenArea = 0.0
-        
+        gArea = 0.0
+        rArea = 0.0
+        grArea = 0.0
+
         for pixel_w in range(0, width, 1):
             for pixel_h in range(0, height, 1):
                 (b, g, r) = image[pixel_h, pixel_w]
-                if((b+g+r)>0):
-                    greenArea += 1     
+                if(g>0):
+                    gArea += 1     
+                if(r>0):
+                    rArea += 1
+                if(r>0 and g>0):
+                    grArea += 1
 
-        plantArea = greenArea / (width*height)
-
-        return plantArea
+        totalArea = width*height
+        return (gArea/totalArea, rArea/totalArea, grArea/totalArea)

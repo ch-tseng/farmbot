@@ -18,14 +18,19 @@ args = vars(ap.parse_args())
 plantsArea = PLANTSAREA(args["image"], reSize)
 
 imgPlants = plantsArea.extractPlantsArea(b_threshold=int(args["green"]), a_threshold=int(args["red"]))
-ratioPlants = plantsArea.countPlantsArea(imgPlants)
+(greenArea, redArea, overlapArea) = plantsArea.countPlantsArea(imgPlants)
+print greenArea, redArea, overlapArea
 
 if (debugPrint==False):
-    print (ratioPlants)
+    print (greenArea, redArea, overlapArea)
 
 else:
-    textRatio = str(int(ratioPlants * 100)) + "%"
-    cv2.putText(imgPlants, textRatio, (imgPlants.shape[1]-150, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 1, 126), 5)
+    textRatio = str(int((greenArea+redArea-overlapArea) * 100)) + "%"
+
+    font = cv2.FONT_HERSHEY_COMPLEX_SMALL
+    cv2.putText(imgPlants, "green plants:" + str(int((greenArea+overlapArea)*100))+"%", (imgPlants.shape[1]-220, 20), font, 1, (255, 1, 126), 1)
+    cv2.putText(imgPlants, "red plants:" + str(int(redArea*100))+"%", (imgPlants.shape[1]-220, 45), font, 1, (255, 1, 126), 1)
+    cv2.putText(imgPlants, "total plants:" + textRatio, (imgPlants.shape[1]-220, 70), font, 1, (255, 1, 126), 1)
     cv2.imshow("Plants area", imgPlants)
     cv2.imwrite("output.png", imgPlants)
     cv2.waitKey(0)
