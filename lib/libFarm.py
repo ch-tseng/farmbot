@@ -8,12 +8,15 @@ class SPROUT:
         self.thresh = vThresh
         self.erode = vErode
         self.dilate = vDilate
+        self.notSprout = 0
+
         self.notSprout = self.countSprout(imgNoSprout)
         print("Not sprout numbers: {}".format(self.notSprout))
 
     def countSprout(self, image):
         image = cv2.resize(image, self.resize, interpolation = cv2.INTER_AREA)
         cv2.imshow("Original", image)
+        cv2.imwrite("original.png", image)
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
         blurred = cv2.GaussianBlur(gray, self.blur, 0) 
@@ -26,7 +29,12 @@ class SPROUT:
 
         (cnts, _) = cv2.findContours(canny, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
         cv2.drawContours(image, cnts, -1, (0, 255, 0), 2)
+
+        numNotSprout = self.notSprout
+        font = cv2.FONT_HERSHEY_COMPLEX_SMALL
+        cv2.putText(image, "Sprout count: " + str(len(cnts)-numNotSprout), (image.shape[1]-500, 40), font, 2, (255, 1, 126), 3)
         cv2.imshow("SPROUTS", image)
+        cv2.imwrite("detectSprout.png", image)
 
         return len(cnts)
 

@@ -16,5 +16,7 @@ args = vars(ap.parse_args())
 
 objSprout = SPROUT(cv2.imread(args["noSprout"]), reSize, (5,5), 120, 2,4)
 numSprout = objSprout.countSprout(cv2.imread(args["Sprout"])) - objSprout.notSprout
+
 print("sprout count: {}".format(numSprout))
+
 cv2.waitKey(0)
