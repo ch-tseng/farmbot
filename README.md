@@ -4,8 +4,8 @@ Farmbot<br />
 example: <br />
 *python countSprout.py -n images/seed2.jpg -s images/seed1.jpg* 
 <br /><br />
--n: path for the image which seeds are not sprout yet  <br />
--s: path for the image which seeds are sprout <br />
+-n: path for the image which seeds not sprout yet  <br />
+-s: path for the image which seeds sprout <br />
 ![alt tag](https://github.com/ch-tseng/farmbot/blob/master/detectSprout.png)
 
 ### countPlantsArea.py (Count plants area) <br />
