@@ -1,6 +1,35 @@
 import cv2
 import numpy as np
 
+class SPROUT:
+    def __init__(self, imgNoSprout, reSize=(1000,563), vBlur=(5,5), vThresh=120, vErode=2, vDilate=4):
+        self.resize = reSize
+        self.blur = vBlur
+        self.thresh = vThresh
+        self.erode = vErode
+        self.dilate = vDilate
+        self.notSprout = self.countSprout(imgNoSprout)
+        print("Not sprout numbers: {}".format(self.notSprout))
+
+    def countSprout(self, image):
+        image = cv2.resize(image, self.resize, interpolation = cv2.INTER_AREA)
+        cv2.imshow("Original", image)
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+        blurred = cv2.GaussianBlur(gray, self.blur, 0) 
+        (T, thresh) = cv2.threshold(blurred, self.thresh, 255, cv2.THRESH_BINARY)
+
+        thresh = cv2.erode(thresh, None, iterations=self.erode)
+        thresh = cv2.dilate(thresh, None, iterations=self.dilate)
+        #return thresh
+        canny = cv2.Canny(thresh, 80, 150)
+
+        (cnts, _) = cv2.findContours(canny, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+        cv2.drawContours(image, cnts, -1, (0, 255, 0), 2)
+        cv2.imshow("SPROUTS", image)
+
+        return len(cnts)
+
 class PLANTSAREA:
     def __init__(self, imgPath, reSize=(250,250)):
         image = cv2.imread(imgPath)
