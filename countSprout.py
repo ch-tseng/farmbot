@@ -13,12 +13,13 @@ ap.add_argument("-s", "--Sprout", required=True, help="Path to the image with se
 
 args = vars(ap.parse_args())
 
-objSprout = SPROUT(reSize=reSize, vBlur=(5,5), vThresh=200, vErode=2, vDilate=1, debug=True)
+objSprout = SPROUT(reSize=reSize, vBlur=(3,3), vThresh=160, vErode=3, vDilate=2, debug=True)
 
 # objSprout.countSprout( "image file" , "Sprout Size" )
-numNoSprout = objSprout.countSprout(cv2.imread(args["noSprout"]), 3)
-numSprout = objSprout.countSprout(cv2.imread(args["Sprout"]), 3)
+numNoSprout = objSprout.countSprout(cv2.imread(args["noSprout"]), 20)
+numSprout = objSprout.countSprout(cv2.imread(args["Sprout"]), 20)
+countSprout = (numSprout-numNoSprout) if (numSprout-numNoSprout>0) else 0
 
-print("sprout count: {} - {} = {}".format(numSprout, numNoSprout, numSprout-numNoSprout))
+print("sprout count: {} - {} = {}".format(numSprout, numNoSprout, countSprout))
 
 cv2.waitKey(0)

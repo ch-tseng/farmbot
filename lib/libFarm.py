@@ -20,13 +20,14 @@ class SPROUT:
             cv2.imshow("Original #" + str(self.indexNum) , image)
             cv2.imwrite("original.png", image)
 
-        #gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-        (H, S, gray) = cv2.split(hsv)
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        #hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+        #(H, S, gray) = cv2.split(hsv)
         blurred = cv2.GaussianBlur(gray, self.blur, 0) 
         (T, thresh) = cv2.threshold(blurred, self.thresh, 255, cv2.THRESH_BINARY)
 
         if(self.debug==True):
+            cv2.imshow("Blurred", blurred)
             cv2.imshow("Thresh A #" + str(self.indexNum) , thresh)
 
         thresh = cv2.dilate(thresh, None, iterations=self.dilate)
@@ -35,19 +36,18 @@ class SPROUT:
         if(self.debug==True):
             cv2.imshow("Thresh B #" + str(self.indexNum) , thresh)
 
-        canny = cv2.Canny(thresh, 40, 150)
+        #canny = cv2.Canny(thresh, 40, 150)
 
-        if(self.debug==True):
-            cv2.imshow("Canny #" + str(self.indexNum) , canny)
+        #if(self.debug==True):
+        #    cv2.imshow("Canny #" + str(self.indexNum) , canny)
 
-        (cnts, _) = cv2.findContours(canny, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+        (cnts, _) = cv2.findContours(thresh, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
         for (i, c) in enumerate(cnts):
             area = cv2.contourArea(c)
-            ((x, y), radius) = cv2.minEnclosingCircle(c)
-            cv2.drawContours(image, [c], -1, (0, 255, 0), 2)
-
             if(area>=size):
                 numSprouts += 1
+                ((x, y), radius) = cv2.minEnclosingCircle(c)
+                cv2.drawContours(image, [c], -1, (0, 255, 0), 2)
 
         if(self.debug==True):
             font = cv2.FONT_HERSHEY_COMPLEX_SMALL
