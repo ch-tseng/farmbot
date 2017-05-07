@@ -4,7 +4,6 @@ import cv2
 from lib.libFarm import SPROUT
 
 # You can adjust the values here ---------------
-createImage = True
 reSize=(1000,563)
 #-----------------------------------------------
 
@@ -14,9 +13,12 @@ ap.add_argument("-s", "--Sprout", required=True, help="Path to the image with se
 
 args = vars(ap.parse_args())
 
-objSprout = SPROUT(cv2.imread(args["noSprout"]), reSize, (5,5), 120, 2,4)
-numSprout = objSprout.countSprout(cv2.imread(args["Sprout"])) - objSprout.notSprout
+objSprout = SPROUT(reSize=reSize, vBlur=(5,5), vThresh=200, vErode=2, vDilate=1, debug=True)
 
-print("sprout count: {}".format(numSprout))
+# objSprout.countSprout( "image file" , "Sprout Size" )
+numNoSprout = objSprout.countSprout(cv2.imread(args["noSprout"]), 3)
+numSprout = objSprout.countSprout(cv2.imread(args["Sprout"]), 3)
+
+print("sprout count: {} - {} = {}".format(numSprout, numNoSprout, numSprout-numNoSprout))
 
 cv2.waitKey(0)

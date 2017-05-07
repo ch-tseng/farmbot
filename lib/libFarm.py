@@ -2,41 +2,59 @@ import cv2
 import numpy as np
 
 class SPROUT:
-    def __init__(self, imgNoSprout, reSize=(1000,563), vBlur=(5,5), vThresh=120, vErode=2, vDilate=4):
+    def __init__(self, reSize=(1000,563), vBlur=(5,5), vThresh=120, vErode=2, vDilate=4, debug=False):
         self.resize = reSize
         self.blur = vBlur
         self.thresh = vThresh
         self.erode = vErode
         self.dilate = vDilate
-        self.notSprout = 0
+        self.indexNum = 0
+        self.debug = debug
 
-        self.notSprout = self.countSprout(imgNoSprout)
-        print("Not sprout numbers: {}".format(self.notSprout))
+    def countSprout(self, image, size=2):
+        self.indexNum += 1
+        numSprouts = 0
 
-    def countSprout(self, image):
         image = cv2.resize(image, self.resize, interpolation = cv2.INTER_AREA)
-        cv2.imshow("Original", image)
-        cv2.imwrite("original.png", image)
-        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        if(self.debug==True):   
+            cv2.imshow("Original #" + str(self.indexNum) , image)
+            cv2.imwrite("original.png", image)
 
+        #gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+        (H, S, gray) = cv2.split(hsv)
         blurred = cv2.GaussianBlur(gray, self.blur, 0) 
         (T, thresh) = cv2.threshold(blurred, self.thresh, 255, cv2.THRESH_BINARY)
 
-        thresh = cv2.erode(thresh, None, iterations=self.erode)
+        if(self.debug==True):
+            cv2.imshow("Thresh A #" + str(self.indexNum) , thresh)
+
         thresh = cv2.dilate(thresh, None, iterations=self.dilate)
-        #return thresh
-        canny = cv2.Canny(thresh, 80, 150)
+        thresh = cv2.erode(thresh, None, iterations=self.erode)
+
+        if(self.debug==True):
+            cv2.imshow("Thresh B #" + str(self.indexNum) , thresh)
+
+        canny = cv2.Canny(thresh, 40, 150)
+
+        if(self.debug==True):
+            cv2.imshow("Canny #" + str(self.indexNum) , canny)
 
         (cnts, _) = cv2.findContours(canny, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
-        cv2.drawContours(image, cnts, -1, (0, 255, 0), 2)
+        for (i, c) in enumerate(cnts):
+            area = cv2.contourArea(c)
+            ((x, y), radius) = cv2.minEnclosingCircle(c)
+            cv2.drawContours(image, [c], -1, (0, 255, 0), 2)
 
-        numNotSprout = self.notSprout
-        font = cv2.FONT_HERSHEY_COMPLEX_SMALL
-        cv2.putText(image, "Sprout count: " + str(len(cnts)-numNotSprout), (image.shape[1]-500, 40), font, 2, (255, 1, 126), 3)
-        cv2.imshow("SPROUTS", image)
-        cv2.imwrite("detectSprout.png", image)
+            if(area>=size):
+                numSprouts += 1
 
-        return len(cnts)
+        if(self.debug==True):
+            font = cv2.FONT_HERSHEY_COMPLEX_SMALL
+            cv2.putText(image, "Sprout count: " + str(numSprouts), (image.shape[1]-500, 40), font, 2, (255, 1, 126), 3)
+            cv2.imshow("SPROUTS #" + str(self.indexNum) , image)
+
+        return numSprouts
 
 class PLANTSAREA:
     def __init__(self, imgPath, reSize=(250,250)):
