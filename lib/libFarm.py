@@ -30,8 +30,8 @@ class SPROUT:
             cv2.imshow("Blurred", blurred)
             cv2.imshow("Thresh A #" + str(self.indexNum) , thresh)
 
-        thresh = cv2.dilate(thresh, None, iterations=self.dilate)
-        thresh = cv2.erode(thresh, None, iterations=self.erode)
+        #thresh = cv2.dilate(thresh, None, iterations=self.dilate)
+        #thresh = cv2.erode(thresh, None, iterations=self.erode)
 
         if(self.debug==True):
             cv2.imshow("Thresh B #" + str(self.indexNum) , thresh)
