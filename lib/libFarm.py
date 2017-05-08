@@ -11,7 +11,7 @@ class SPROUT:
         self.indexNum = 0
         self.debug = debug
 
-    def countSprout(self, image, size=2):
+    def countSprout(self, image, minSize=25, maxSize=450):
         self.indexNum += 1
         numSprouts = 0
 
@@ -33,27 +33,10 @@ class SPROUT:
 
         gray = cv2.bitwise_or(gray1, gray2)
 
-        #blurred = cv2.GaussianBlur(gray, self.blur, 0) 
-        #(T, thresh) = cv2.threshold(blurred, self.thresh, 255, cv2.THRESH_BINARY)
-        #(T, thresh) = cv2.threshold(blurred, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
-
         if(self.debug==True and self.indexNum==2):
             cv2.imshow("GRAY1", gray1)
             cv2.imshow("GRAY2", gray2)
             cv2.imshow("Final GRAY", gray)
-            #cv2.imshow("Blurred", blurred)
-            #cv2.imshow("Thresh A #" + str(self.indexNum) , thresh)
-
-        #thresh = cv2.erode(thresh, None, iterations=self.erode)
-        #thresh = cv2.dilate(thresh, None, iterations=self.dilate)
-
-        #if(self.debug==True):
-        #    cv2.imshow("Thresh B #" + str(self.indexNum) , thresh)
-
-        #canny = cv2.Canny(blurred, 30, 150)
-
-        #if(self.debug==True and self.indexNum==2):
-        #    cv2.imshow("Canny #" + str(self.indexNum) , canny)
 
         (cnts, _) = cv2.findContours(gray, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
         for (i, c) in enumerate(cnts):
@@ -63,10 +46,10 @@ class SPROUT:
             hullArea = cv2.contourArea(hull)
             solidity = (area / float(hullArea)) if (hullArea>0) else 0
 
-            print ("area:{} , hullArea:{}, solidity:{}".format(area,hullArea,solidity))
+            if(self.debug==True and self.indexNum==2):
+                print ("area:{} , hullArea:{}, solidity:{}".format(area,hullArea,solidity))
 
-            if((area>=size and area<=450)):
-            #if((area>=size)):
+            if((area>=minSize and area<=maxSize)):
             #if((solidity>=0.5 and solidity<=1)):
                 numSprouts += 1
                 ((x, y), radius) = cv2.minEnclosingCircle(c)
