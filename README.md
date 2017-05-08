@@ -2,7 +2,7 @@ Farmbot<br />
 ---
 ### countSprout.py (Count sprout number) <br />
 example: <br />
-*python countSprout.py -n images/seed2.jpg -s images/seed1.jpg* 
+*python countSprout.py -n frames/image_20170507010203.jpg -s frames/image_20170508050203.jpg* 
 <br /><br />
 -n: path for the image which seeds not sprout yet  <br />
 -s: path for the image which seeds sprout <br />
