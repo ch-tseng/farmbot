@@ -20,13 +20,20 @@ class SPROUT:
             cv2.imshow("Original #" + str(self.indexNum) , image)
             cv2.imwrite("original.png", image)
 
-        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        #hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-        #(H, S, gray) = cv2.split(hsv)
+        (R, gray1, B) = cv2.split(image)
+        (T, gray1) = cv2.threshold(gray1, self.thresh, 255, cv2.THRESH_BINARY)
+        lab = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
+        (L, A, gray2) = cv2.split(lab)
+        (T, gray2) = cv2.threshold(gray2, self.thresh, 255, cv2.THRESH_BINARY)
+        gray = cv2.bitwise_or(gray1, gray2)
+
         blurred = cv2.GaussianBlur(gray, self.blur, 0) 
         (T, thresh) = cv2.threshold(blurred, self.thresh, 255, cv2.THRESH_BINARY)
 
         if(self.debug==True):
+            cv2.imshow("GRAY1", gray1)
+            cv2.imshow("GRAY2", gray2)
+            cv2.imshow("Final GRAY", gray)
             cv2.imshow("Blurred", blurred)
             cv2.imshow("Thresh A #" + str(self.indexNum) , thresh)
 
