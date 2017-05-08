@@ -2,10 +2,10 @@ import cv2
 import numpy as np
 
 class SPROUT:
-    def __init__(self, reSize=(1000,563), vBlur=(5,5), vThresh=120, vErode=2, vDilate=4, debug=False):
+    def __init__(self, reSize=(1000,563), vThresh1=210, vThresh2=120, vErode=2, vDilate=4, debug=False):
         self.resize = reSize
-        self.blur = vBlur
-        self.thresh = vThresh
+        self.thresh1 = vThresh1
+        self.thresh2 = vThresh2
         self.erode = vErode
         self.dilate = vDilate
         self.indexNum = 0
@@ -16,47 +16,63 @@ class SPROUT:
         numSprouts = 0
 
         image = cv2.resize(image, self.resize, interpolation = cv2.INTER_AREA)
-        if(self.debug==True):   
+        if(self.debug==True and self.indexNum==2):   
             cv2.imshow("Original #" + str(self.indexNum) , image)
             cv2.imwrite("original.png", image)
 
-        (R, gray1, B) = cv2.split(image)
-        (T, gray1) = cv2.threshold(gray1, self.thresh, 255, cv2.THRESH_BINARY)
+        gray1 = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        (T, gray1) = cv2.threshold(gray1, self.thresh1, 255, cv2.THRESH_BINARY)
+        gray1 = cv2.erode(gray1, None, iterations=self.erode)
+        gray1 = cv2.dilate(gray1, None, iterations=self.dilate)
+
         lab = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
         (L, A, gray2) = cv2.split(lab)
-        (T, gray2) = cv2.threshold(gray2, self.thresh, 255, cv2.THRESH_BINARY)
+        (T, gray2) = cv2.threshold(gray2, self.thresh2, 255, cv2.THRESH_BINARY)
+        gray2 = cv2.erode(gray2, None, iterations=self.erode)
+        gray2 = cv2.dilate(gray2, None, iterations=self.dilate)
+
         gray = cv2.bitwise_or(gray1, gray2)
 
-        blurred = cv2.GaussianBlur(gray, self.blur, 0) 
-        (T, thresh) = cv2.threshold(blurred, self.thresh, 255, cv2.THRESH_BINARY)
+        #blurred = cv2.GaussianBlur(gray, self.blur, 0) 
+        #(T, thresh) = cv2.threshold(blurred, self.thresh, 255, cv2.THRESH_BINARY)
+        #(T, thresh) = cv2.threshold(blurred, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
 
-        if(self.debug==True):
+        if(self.debug==True and self.indexNum==2):
             cv2.imshow("GRAY1", gray1)
             cv2.imshow("GRAY2", gray2)
             cv2.imshow("Final GRAY", gray)
-            cv2.imshow("Blurred", blurred)
-            cv2.imshow("Thresh A #" + str(self.indexNum) , thresh)
+            #cv2.imshow("Blurred", blurred)
+            #cv2.imshow("Thresh A #" + str(self.indexNum) , thresh)
 
-        #thresh = cv2.dilate(thresh, None, iterations=self.dilate)
         #thresh = cv2.erode(thresh, None, iterations=self.erode)
-
-        if(self.debug==True):
-            cv2.imshow("Thresh B #" + str(self.indexNum) , thresh)
-
-        #canny = cv2.Canny(thresh, 40, 150)
+        #thresh = cv2.dilate(thresh, None, iterations=self.dilate)
 
         #if(self.debug==True):
+        #    cv2.imshow("Thresh B #" + str(self.indexNum) , thresh)
+
+        #canny = cv2.Canny(blurred, 30, 150)
+
+        #if(self.debug==True and self.indexNum==2):
         #    cv2.imshow("Canny #" + str(self.indexNum) , canny)
 
-        (cnts, _) = cv2.findContours(thresh, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+        (cnts, _) = cv2.findContours(gray, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
         for (i, c) in enumerate(cnts):
             area = cv2.contourArea(c)
-            if(area>=size):
+            (x, y, w, h) = cv2.boundingRect(c)
+            hull = cv2.convexHull(c)
+            hullArea = cv2.contourArea(hull)
+            solidity = (area / float(hullArea)) if (hullArea>0) else 0
+
+            print ("area:{} , hullArea:{}, solidity:{}".format(area,hullArea,solidity))
+
+            if((area>=size and area<=450)):
+            #if((area>=size)):
+            #if((solidity>=0.5 and solidity<=1)):
                 numSprouts += 1
                 ((x, y), radius) = cv2.minEnclosingCircle(c)
                 cv2.drawContours(image, [c], -1, (0, 255, 0), 2)
 
-        if(self.debug==True):
+        if(self.debug==True and self.indexNum==2):
             font = cv2.FONT_HERSHEY_COMPLEX_SMALL
             cv2.putText(image, "Sprout count: " + str(numSprouts), (image.shape[1]-500, 40), font, 2, (255, 1, 126), 3)
             cv2.imshow("SPROUTS #" + str(self.indexNum) , image)
