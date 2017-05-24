@@ -58,6 +58,7 @@ class SPROUT:
         if(self.debug==True and self.indexNum==2):
             font = cv2.FONT_HERSHEY_COMPLEX_SMALL
             cv2.putText(image, "Sprout count: " + str(numSprouts), (image.shape[1]-500, 40), font, 2, (255, 1, 126), 3)
+            cv2.imwrite("detectSprout.png", image)
             cv2.imshow("SPROUTS #" + str(self.indexNum) , image)
 
         return numSprouts
